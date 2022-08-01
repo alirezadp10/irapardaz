@@ -28,6 +28,10 @@ class ShowTest extends TestCase
             ],
             'capacity' => 10
         ])->assertCreated();
+
+        $this->assertDatabaseCount('shows', 1);
+
+        $this->assertDatabaseCount('time_tables', 2);
     }
 
     /**
@@ -81,7 +85,7 @@ class ShowTest extends TestCase
         ]);
 
         $response->assertJsonValidationErrors([
-            'capacity' => 'shows capacity cannot be less than 5 people'
+            'capacity' => 'The capacity must be at least 5.'
         ]);
     }
 
@@ -90,9 +94,9 @@ class ShowTest extends TestCase
      */
     public function shows_list_must_be_reachable_in_pagination_with_the_size_of_5()
     {
-        \App\Models\Show::factory(17)->create();
+        \App\Models\Show::factory(17)->hasTimes(2)->create();
 
-        $response = $this->getJson('/show')->assertOk()->assertJsonStructure([
+        $this->getJson('/show')->assertOk()->assertJsonStructure([
             'data' => [
                 [
                     "id",
@@ -104,12 +108,9 @@ class ShowTest extends TestCase
                         ]
                     ],
                     "capacity",
-                    "updated_at",
                     "created_at",
                 ],
             ],
         ])->assertJsonCount(5, 'data');
-
-        $this->assertCount(17, $response->json('data.total'));
     }
 }
