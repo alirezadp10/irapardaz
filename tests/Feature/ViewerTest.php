@@ -14,7 +14,13 @@ class ViewerTest extends TestCase
      */
     public function viewer_can_be_created_by_user()
     {
-        $this->assertTrue(true);
+        $this->postJson('/viewer', [
+            'first_name'    => 'john',
+            'last_name'     => 'doe',
+            'national_code' => '0018920111',
+        ])->assertCreated();
+
+        $this->assertDatabaseCount('viewers', 1);
     }
 
     /**
@@ -22,7 +28,19 @@ class ViewerTest extends TestCase
      */
     public function viewer_cannot_have_a_national_code_that_already_exists()
     {
-        $this->assertTrue(true);
+        \App\Models\Viewer::factory()->create([
+            'national_code' => '0018920111',
+        ]);
+
+        $response = $this->postJson('/viewer', [
+            'first_name'    => 'john',
+            'last_name'     => 'doe',
+            'national_code' => '0018920111',
+        ]);
+
+        $response->assertJsonValidationErrors([
+            'national_code' => 'duplicate'
+        ]);
     }
 
     /**
@@ -30,7 +48,15 @@ class ViewerTest extends TestCase
      */
     public function national_code_last_digit_must_be_valid()
     {
-        $this->assertTrue(true);
+        $response = $this->postJson('/viewer', [
+            'first_name'    => 'john',
+            'last_name'     => 'doe',
+            'national_code' => '0018925201',
+        ]);
+
+        $response->assertJsonValidationErrors([
+            'national_code' => 'invalid'
+        ]);
     }
 
     /**
@@ -38,6 +64,18 @@ class ViewerTest extends TestCase
      */
     public function viewers_list_must_be_reachable_in_pagination()
     {
-        $this->assertTrue(true);
+        \App\Models\Viewer::factory(10)->create();
+
+        $this->getJson('/viewer')->assertOk()->assertJsonStructure([
+            'data' => [
+                [
+                    "id",
+                    "first_name",
+                    "last_name",
+                    "national_code",
+                    "created_at",
+                ],
+            ],
+        ])->assertJsonCount(10, 'data');
     }
 }
