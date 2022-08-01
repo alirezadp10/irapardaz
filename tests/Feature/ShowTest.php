@@ -16,20 +16,23 @@ class ShowTest extends TestCase
     {
         $this->postJson('/show', [
             'name'     => 'first show',
-            'times'    => [
-                [
-                    'day'  => 'sat',
-                    'time' => '15:00'
-                ],
+            'times'    => $times = [
                 [
                     'day'  => 'fri',
                     'time' => '13:30'
+                ],
+                [
+                    'day'  => 'sat',
+                    'time' => '15:00'
                 ],
             ],
             'capacity' => 10
         ])->assertCreated();
 
-        $this->assertDatabaseCount('shows', 1);
+        $this->assertDatabaseHas('shows', [
+            'name'     => 'first show',
+            'capacity' => 10
+        ]);
 
         $this->assertDatabaseCount('time_tables', 2);
     }

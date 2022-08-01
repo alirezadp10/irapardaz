@@ -14,13 +14,13 @@ class ViewerTest extends TestCase
      */
     public function viewer_can_be_created_by_user()
     {
-        $this->postJson('/viewer', [
+        $this->postJson('/viewer', $data = [
             'first_name'    => 'john',
             'last_name'     => 'doe',
             'national_code' => '0018920111',
         ])->assertCreated();
 
-        $this->assertDatabaseCount('viewers', 1);
+        $this->assertDatabaseHas('viewers', $data);
     }
 
     /**
@@ -39,7 +39,7 @@ class ViewerTest extends TestCase
         ]);
 
         $response->assertJsonValidationErrors([
-            'national_code' => 'duplicate'
+            'national_code' => 'The national code has already been taken.'
         ]);
     }
 
@@ -51,11 +51,11 @@ class ViewerTest extends TestCase
         $response = $this->postJson('/viewer', [
             'first_name'    => 'john',
             'last_name'     => 'doe',
-            'national_code' => '0018925201',
+            'national_code' => '1599861377',
         ]);
 
         $response->assertJsonValidationErrors([
-            'national_code' => 'invalid'
+            'national_code' => 'The national code is not valid.'
         ]);
     }
 
