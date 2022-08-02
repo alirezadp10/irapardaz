@@ -14,7 +14,7 @@ class ShowTest extends TestCase
      */
     public function show_can_be_created_by_user()
     {
-        $this->postJson('/show', [
+        $this->postJson('/shows', [
             'name'     => 'first show',
             'times'    => $times = [
                 [
@@ -47,7 +47,7 @@ class ShowTest extends TestCase
             'time' => '13:00',
         ]);
 
-        $response = $this->postJson('/show', [
+        $response = $this->postJson('/shows', [
             'name'     => 'second show',
             'times'    => [
                 [
@@ -72,7 +72,7 @@ class ShowTest extends TestCase
      */
     public function shows_capacity_cannot_be_less_than_5_people()
     {
-        $response = $this->postJson('/show', [
+        $response = $this->postJson('/shows', [
             'name'     => 'second show',
             'times'    => [
                 [
@@ -97,9 +97,9 @@ class ShowTest extends TestCase
      */
     public function shows_list_must_be_reachable_in_pagination_with_the_size_of_5()
     {
-        \App\Models\Show::factory(17)->hasTimes(2)->create();
+        \App\Models\Show::factory(17)->hasSchedules(2)->create();
 
-        $this->getJson('/show')->assertOk()->assertJsonStructure([
+        $this->getJson('/shows')->assertOk()->assertJsonStructure([
             'data' => [
                 [
                     "id",

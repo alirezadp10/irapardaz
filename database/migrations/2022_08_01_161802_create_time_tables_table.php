@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->enum('day', ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri']);
             $table->time('time');
             $table->index(['day', 'time']);
-            $table->foreignIdFor(Show::class);
+            $table->foreignIdFor(Show::class)->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

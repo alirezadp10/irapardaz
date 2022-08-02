@@ -15,6 +15,11 @@ class TimeTable extends Model
 
     public function show()
     {
-        return $this->belongsTo('show');
+        return $this->belongsTo(Show::class);
+    }
+
+    public function reserves()
+    {
+        return $this->belongsToMany(Viewer::class, 'reservations')->withTimestamps();
     }
 }

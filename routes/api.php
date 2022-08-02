@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ShowController;
 use App\Http\Controllers\ViewerController;
 use Illuminate\Support\Facades\Route;
@@ -15,8 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('show', [ShowController::class, 'store']);
-Route::get('show', [ShowController::class, 'index']);
+Route::post('shows', [ShowController::class, 'store']);
+Route::get('shows', [ShowController::class, 'index']);
 
-Route::post('viewer', [ViewerController::class, 'store']);
-Route::get('viewer', [ViewerController::class, 'index']);
+Route::post('viewers', [ViewerController::class, 'store']);
+Route::get('viewers', [ViewerController::class, 'index']);
+
+Route::post('reserves', [ReservationController::class, 'store'])->middleware('reservation');

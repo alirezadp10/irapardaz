@@ -154,6 +154,11 @@ return [
                 'duplicate' => 'multiple shows cannot hold at the same time'
             ],
         ],
+        'reservation' => [
+            'time_table_id' => [
+                'capacity' => 'The capacity of this time is full.'
+            ]
+        ]
     ],
 
     /*

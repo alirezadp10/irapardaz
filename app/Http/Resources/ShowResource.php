@@ -12,7 +12,7 @@ class ShowResource extends JsonResource
             'id'         => $this->id,
             'name'       => $this->name,
             'capacity'   => $this->capacity,
-            'times'      => TimeTableResource::collection($this->times),
+            'times'      => TimeTableResource::collection($this->schedules),
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }

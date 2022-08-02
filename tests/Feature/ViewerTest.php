@@ -14,7 +14,7 @@ class ViewerTest extends TestCase
      */
     public function viewer_can_be_created_by_user()
     {
-        $this->postJson('/viewer', $data = [
+        $this->postJson('/viewers', $data = [
             'first_name'    => 'john',
             'last_name'     => 'doe',
             'national_code' => '0018920111',
@@ -32,7 +32,7 @@ class ViewerTest extends TestCase
             'national_code' => '0018920111',
         ]);
 
-        $response = $this->postJson('/viewer', [
+        $response = $this->postJson('/viewers', [
             'first_name'    => 'john',
             'last_name'     => 'doe',
             'national_code' => '0018920111',
@@ -48,7 +48,7 @@ class ViewerTest extends TestCase
      */
     public function national_code_last_digit_must_be_valid()
     {
-        $response = $this->postJson('/viewer', [
+        $response = $this->postJson('/viewers', [
             'first_name'    => 'john',
             'last_name'     => 'doe',
             'national_code' => '1599861377',
@@ -66,7 +66,7 @@ class ViewerTest extends TestCase
     {
         \App\Models\Viewer::factory(10)->create();
 
-        $this->getJson('/viewer')->assertOk()->assertJsonStructure([
+        $this->getJson('/viewers')->assertOk()->assertJsonStructure([
             'data' => [
                 [
                     "id",

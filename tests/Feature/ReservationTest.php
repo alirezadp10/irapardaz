@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Show;
+use App\Models\TimeTable;
 use App\Models\Viewer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -18,21 +19,20 @@ class ReservationTest extends TestCase
     {
         $viewer = Viewer::factory()->create();
 
-        $show = Show::factory()
-            ->hasTimes(['day' => 'fri', 'time' => '12:00'])
-            ->hasReserve(2)
-            ->create(['capacity' => 6]);
+        $timeTable = TimeTable::factory()->create(['day' => 'fri', 'time' => '12:00']);
 
-        $this->postJson('/reserve', [
-            'viewer_id' => $viewer->id,
-            'show_id'   => $show->id,
-            'day'       => 'fri',
-            'time'      => '12:00'
+        $show = Show::factory()->create(['capacity' => 6]);
+
+        $show->schedules()->save($timeTable);
+
+        $this->postJson('/reserves', [
+            'viewer_id'     => $viewer->id,
+            'time_table_id' => $timeTable->id,
         ])->assertCreated();
 
         $this->assertDatabaseHas('reservations', [
-            'viewer_id' => $viewer->id,
-            'show_id'   => $show->id,
+            'viewer_id'     => $viewer->id,
+            'time_table_id' => $timeTable->id,
         ]);
     }
 
@@ -41,20 +41,21 @@ class ReservationTest extends TestCase
      */
     public function viewer_cannot_reserve_a_show_which_filled_already()
     {
+        $show = Show::factory()->create(['capacity' => 6]);
+
+        $timeTable = TimeTable::factory()->hasReserves(6)->create([
+            'day'     => 'fri',
+            'time'    => '12:00',
+            'show_id' => $show->id
+        ]);
+
         $viewer = Viewer::factory()->create();
 
-        $show = Show::factory()
-            ->hasTimes(['day' => 'fri', 'time' => '12:00'])
-            ->hasReserve(6)
-            ->create(['capacity' => 6]);
-
-        $this->postJson('/reserve', [
-            'viewer_id' => $viewer->id,
-            'show_id'   => $show->id,
-            'day'       => 'fri',
-            'time'      => '12:00'
+        $this->postJson('/reserves', [
+            'viewer_id'     => $viewer->id,
+            'time_table_id' => $timeTable->id,
         ])->assertJsonValidationErrors([
-            'time' => 'The capacity of this time is full.'
+            'time_table_id' => 'The capacity of this time is full.'
         ]);
     }
 }

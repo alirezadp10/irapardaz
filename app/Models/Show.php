@@ -13,8 +13,13 @@ class Show extends Model
         'name', 'capacity',
     ];
 
-    public function times()
+    public function schedules()
     {
         return $this->hasMany(TimeTable::class);
+    }
+
+    public function reserves()
+    {
+        return $this->schedules()->reserves;
     }
 }

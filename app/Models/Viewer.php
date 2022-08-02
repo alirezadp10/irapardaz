@@ -12,4 +12,9 @@ class Viewer extends Model
     protected $fillable = [
         'first_name', 'last_name', 'national_code'
     ];
+
+    public function reserves()
+    {
+        return $this->belongsToMany(TimeTable::class, 'reservations')->withTimestamps();
+    }
 }

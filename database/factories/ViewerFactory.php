@@ -19,7 +19,7 @@ class ViewerFactory extends Factory
         return [
             'first_name'    => $this->faker->firstName,
             'last_name'     => $this->faker->lastName,
-            'national_code' => '0018920111',
+            'national_code' => $this->faker->randomNumber(),
         ];
     }
 }

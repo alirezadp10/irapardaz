@@ -29,7 +29,7 @@ class ShowController extends Controller
             $times[] = new TimeTable($time);
         }
 
-        $show->times()->saveMany($times);
+        $show->schedules()->saveMany($times);
 
         return response()->json([
             'message' => __('app.success'),
