@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ccbd816a07b206f971042295b899d1ba",
+    "content-hash": "da14e829fa61691d2ff089da0cc3e2d8",
     "packages": [
         {
             "name": "brick/math",
@@ -2823,6 +2823,65 @@
                 }
             ],
             "time": "2022-03-27T21:42:02+00:00"
+        },
+        {
+            "name": "recca0120/laravel-parallel",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alirezadp10/laravel-parallel",
+                "reference": "37e6053c4e0eae1b47ec1352907dcd01481660b0"
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/promises": "^1.3.1|^1.4",
+                "guzzlehttp/psr7": "^2.4"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9|^1.3",
+                "orchestra/testbench": "^5.19|^6.18|^7.0",
+                "phpunit/phpunit": "^8.5|^9.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Recca0120\\LaravelParallel\\ParallelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Recca0120\\LaravelParallel\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Recca0120\\LaravelParallel\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "post-autoload-dump": [
+                    "@php ./vendor/bin/testbench package:discover --ansi"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "recca0120",
+                    "email": "recca0120@gmail.com"
+                }
+            ],
+            "keywords": [
+                "laravel",
+                "parallel",
+                "parallel request",
+                "testing"
+            ],
+            "time": "2022-08-02T17:46:21+00:00"
         },
         {
             "name": "symfony/console",
@@ -7920,7 +7979,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "recca0120/laravel-parallel": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

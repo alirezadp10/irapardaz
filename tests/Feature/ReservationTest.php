@@ -6,6 +6,7 @@ use App\Models\Show;
 use App\Models\TimeTable;
 use App\Models\Viewer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Recca0120\LaravelParallel\ParallelRequest;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -57,5 +58,48 @@ class ReservationTest extends TestCase
         ])->assertJsonValidationErrors([
             'time_table_id' => 'The capacity of this time is full.'
         ]);
+    }
+
+    /**
+     * @test
+     * @group race-condition
+     */
+    public function if_multiple_viewers_attempt_to_reserve_the_last_capacity_of_the_show_there_will_only_one_of_them_can_achieve_this()
+    {
+        $this->switchToMysql();
+
+        for ($i = 0; $i < 10; $i++) {
+
+            $timeTable = TimeTable::factory()->hasReserves(5)->create([
+                'day'     => 'fri',
+                'time'    => '12:00',
+                'show_id' => Show::factory()->create(['capacity' => 6])->id
+            ]);
+
+            $viewer = Viewer::factory()->create();
+
+            $request = $this->app->make(ParallelRequest::class);
+
+            $promises = collect($request->times(3)->post('reserves/', [
+                'viewer_id'     => $viewer->id,
+                'time_table_id' => $timeTable->id,
+            ], [
+                'Accept' => 'application/json'
+            ]));
+
+            $statuses = collect();
+
+            $promises->map->wait()->each(function ($response) use ($statuses) {
+                $statuses->add($response->status());
+            });
+
+            $this->assertCount(2, $statuses->filter(fn($status) => $status == 422));
+
+            $this->assertCount(1, $statuses->filter(fn($status) => $status == 201));
+
+            $this->assertEquals(6, $timeTable->reserves()->count());
+        }
+
+        $this->switchToSqlite();
     }
 }

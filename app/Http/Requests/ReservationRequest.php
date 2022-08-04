@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\TimeTable;
 use App\Models\Viewer;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property $timeTable
@@ -19,7 +20,9 @@ class ReservationRequest extends FormRequest
 
     public function withValidator($validator)
     {
-        $this->timeTable = TimeTable::whereId($this->time_table_id)->firstOrFail();
+        DB::beginTransaction();
+
+        $this->timeTable = TimeTable::lockForUpdate()->whereId($this->time_table_id)->firstOrFail();
 
         $this->viewer = Viewer::whereId($this->viewer_id)->firstOrFail();
 
